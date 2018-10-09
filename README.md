@@ -1,5 +1,6 @@
 # ExpenseTracker
 Expense tracker web applicaiton in .NET Core.  
+  
 NuGets:  
 Entity Framework  
 NLog  
@@ -15,5 +16,6 @@ Steps to run in VS;
 - Restore packages in VS  
 - Run 'Update-Database' from Package Manager Console (SQL Server required locally)  
 - LibMan Restore Client-Side Libraries
-- Build  
+- Build 
+- Set ExpenseTracker.Web as startup project 
 - Run (default page is index.html)  
