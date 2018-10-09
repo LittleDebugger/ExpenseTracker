@@ -1,0 +1,107 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script src="lib/jquery/jquery.min.js"></script>
+    <script src="lib/datatables/js/jquery.dataTables.js"></script>
+    <link href="lib/datatables/css/dataTables.bootstrap.css" rel="stylesheet" />
+    <script src="lib/twitter-bootstrap/js/bootstrap.js"></script>
+    <link href="lib/twitter-bootstrap/css/bootstrap.css" rel="stylesheet" />
+    <link href="lib/datatables/css/jquery.dataTables.css" rel="stylesheet" />
+    <script src="lib/knockout/knockout-min.js"></script>
+    <script src="lib/moment.js/moment.js"></script>
+    <script src="scripts/dataService.js"></script>
+    <script src="scripts/staticDataService.js"></script>
+    <script src="scripts/expensesViewModel.js"></script>
+</head>
+
+<body>
+    <div id="expenses-grid" class="table-responsive" style="width:80%; margin: 0 auto">
+        <table class="table table-striped" id="expenses-table">
+            <thead>
+                <tr>
+                    <th style="width: 15%">Transaction Date</th>
+                    <th style="width: 5%">Amount</th>
+                    <th style="width: 10%">Currency</th>
+                    <th style="width: 40%">Recipient</th>
+                    <th style="width: 15%">Transaction Type</th>
+                    <th style="width: 15%"></th>
+                </tr>
+            </thead>
+
+            <tbody data-bind="foreach: rows">
+                <tr>
+                    <td data-bind="text: moment(transactionDate).format('DD MMM YYYY')"></td>
+                    <td data-bind="text: amount.toFixed(2)" class="text-right"></td>
+                    <td data-bind="text: $parent.getEnumText('Currency', currencyId)"></td>
+                    <td data-bind="text: recipient"></td>
+                    <td data-bind="text: $parent.getEnumText('TransactionType', transactionTypeId)"></td>
+                    <td>
+                        <input type="button" value="Edit" class="btn btn-secondary" data-bind="attr: {'rowId': id }, click: $parent.editRow" />
+                        <input type="button" value="Delete" class="btn btn-secondary" data-bind="attr: {'rowId': id }, click: $parent.deleteRow" />
+                    </td>
+                </tr>
+            </tbody>
+
+        </table>
+        <input type="button" value="Add Expense" class="btn btn-primary" data-bind="click: addRow"/>
+    </div>
+
+    <form id="editor-form">
+        <div class="modal" tabindex="-1" role="dialog" id="editor-modal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" data-bind="text: editorIsNewExpense() ? 'Add Expense' : 'Edit Expense'"></h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="md-form mb-5">
+                            <label data-error="wrong" data-success="right" for="editor-transaction-date">Transaction Date</label>
+                            <input type="date" id="defaultForm-email" class="form-control validate" data-bind="value: editorExpense.transactionDate" required />
+                        </div>
+                        <div class="md-form mb-5">
+                            <label data-error="wrong" data-success="right" for="editor-amount">Amount</label>
+                            <input type="number" id="defaultForm-email" class="form-control validate" data-bind="value: editorExpense.amount" required step="0.01" min="0.01" max="10000" />
+                        </div>
+                        <div class="md-form mb-5">
+                            <label data-error="wrong" data-success="right" for="editor-transaction-currency">Currency</label>
+                            <select id="defaultForm-email" class="form-control validate"
+                                    data-bind="options: availableCurrencies,
+                                optionsText: 'value',
+                                optionsValue: 'id',
+                                value: editorExpense.currencyId"></select>
+                        </div>
+                        <div class="md-form mb-5">
+                            <label data-error="wrong" data-success="right" for="editor-transaction-recipient">Recipient</label>
+                            <input type="text" id="editor-transaction-recipient" class="form-control validate" data-bind="value: editorExpense.recipient" required minlength="2" maxlength="50" />
+                        </div>
+                        <div class="md-form mb-5">
+                            <label data-error="wrong" data-success="right" for="editor-transaction-type">TransactionType</label>
+                            <select id="editor-transaction-type" class="form-control validate"
+                                    data-bind="options: availableTransactionTypes,
+                                optionsText: 'value',
+                                optionsValue: 'id',
+                                value: editorExpense.transactionTypeId"></select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" type="submit">Save</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</body>
+</html>
+<script>
+    var vm = {};
+
+    $(document).ready(function () {
+        vm = getExpensesViewModel();
+    });
+
+</script>
